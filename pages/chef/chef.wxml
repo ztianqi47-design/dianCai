@@ -1,0 +1,56 @@
+<view class="page">
+  <view class="hero">
+    <view class="title">大厨工作台</view>
+    <view class="subtitle">查看今日点餐汇总，更新做饭进度，并管理私房菜库。</view>
+  </view>
+
+  <view wx:if="{{user && user.role !== 'chef'}}" class="empty section">
+    当前账号是家人角色，只有大厨可以管理订单。
+  </view>
+
+  <block wx:if="{{!user || user.role === 'chef'}}">
+    <view class="section">
+      <button class="button" style="width: 100%;" bindtap="goDishes">管理私房菜库</button>
+    </view>
+
+    <view class="section">
+      <view class="section-title">今日备餐汇总</view>
+      <view wx:if="{{!summary.length}}" class="empty">今天还没有人点餐</view>
+      <view wx:for="{{summary}}" wx:key="name" class="card row">
+        <view>{{item.name}}</view>
+        <view class="section-title">x {{item.num}}</view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">订单看板</view>
+      <view wx:for="{{orders}}" wx:key="_id" class="card">
+        <view class="row">
+          <view>
+            <view class="section-title">{{item.statusText}}</view>
+            <view class="muted">{{item.createTimeText || ""}}</view>
+          </view>
+        </view>
+        <view class="section">
+          <view wx:for="{{item.dishList}}" wx:for-item="dish" wx:key="dishId" class="row muted">
+            <text>{{dish.name}}</text>
+            <text>x {{dish.num}}</text>
+          </view>
+        </view>
+        <view class="row section">
+          <button class="button secondary" bindtap="updateStatus" data-id="{{item._id}}" data-status="1">备菜中</button>
+          <button class="button" bindtap="updateStatus" data-id="{{item._id}}" data-status="2">开饭啦</button>
+        </view>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">打赏留言</view>
+      <view wx:if="{{!rewardMessages.length}}" class="empty">暂时还没有留言</view>
+      <view wx:for="{{rewardMessages}}" wx:key="_id" class="card">
+        <view>{{item.message}}</view>
+        <view class="muted section">{{item.createTimeText || ""}}</view>
+      </view>
+    </view>
+  </block>
+</view>

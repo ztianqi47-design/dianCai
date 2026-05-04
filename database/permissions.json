@@ -1,0 +1,22 @@
+{
+  "users": {
+    "read": "auth.openid == doc._openid || doc.role == 'chef'",
+    "write": "auth.openid == doc._openid"
+  },
+  "dishes": {
+    "read": true,
+    "write": "doc._openid == auth.openid"
+  },
+  "orders": {
+    "read": "auth.openid == doc._openid || get('database.users').where({ _openid: auth.openid, role: 'chef' }).count() > 0",
+    "write": "auth.openid == doc._openid"
+  },
+  "wishes": {
+    "read": true,
+    "write": "auth.openid == doc._openid"
+  },
+  "reward_messages": {
+    "read": "auth.openid == doc._openid || get('database.users').where({ _openid: auth.openid, role: 'chef' }).count() > 0",
+    "write": "auth.openid == doc._openid"
+  }
+}

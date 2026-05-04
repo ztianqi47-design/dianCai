@@ -1,0 +1,38 @@
+<view class="page">
+  <view class="hero">
+    <view class="title">我的饭点进度</view>
+    <view class="subtitle">大厨更新状态后，这里会看到最新做饭进度。</view>
+  </view>
+
+  <view class="section">
+    <view wx:if="{{!loading && !orders.length}}" class="empty">还没有订单，去菜单页点几道菜吧</view>
+
+    <view wx:for="{{orders}}" wx:key="_id" class="card">
+      <view class="row">
+        <view>
+          <view class="section-title">状态：{{item.statusText}}</view>
+          <view class="muted">{{item.createTimeText || "刚刚点单"}}</view>
+        </view>
+        <button class="button secondary" bindtap="openReward" data-id="{{item._id}}">加个鸡腿</button>
+      </view>
+
+      <view class="section">
+        <view wx:for="{{item.dishList}}" wx:for-item="dish" wx:key="dishId" class="row muted">
+          <text>{{dish.name}}</text>
+          <text>x {{dish.num}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <view wx:if="{{rewardOrderId}}" class="card section">
+    <view class="section-title">打赏大厨</view>
+    <view class="muted">可先查看赞赏码/收款码，完成后留一句话给大厨。</view>
+    <button class="button secondary" style="margin-top: 20rpx;" bindtap="previewRewardCode">查看赞赏码</button>
+    <textarea class="textarea section" placeholder="例如：微信转了18.8，这顿饭绝了！" value="{{rewardMessage}}" bindinput="onRewardInput"></textarea>
+    <view class="row section">
+      <button class="button ghost" bindtap="closeReward">取消</button>
+      <button class="button" bindtap="submitRewardMessage">提交留言</button>
+    </view>
+  </view>
+</view>

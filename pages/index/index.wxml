@@ -1,0 +1,86 @@
+<view class="page-container">
+
+  <view class="main-content">
+
+    <view class="sidebar-wrapper">
+      <t-side-bar value="{{activeCategory}}" bind:change="onSideBarChange">
+        <t-side-bar-item
+          wx:for="{{categories}}"
+          wx:key="*this"
+          value="{{item}}"
+          label="{{item}}"
+        />
+      </t-side-bar>
+    </view>
+
+    <scroll-view scroll-y class="content-area" enhanced show-scrollbar="{{false}}">
+
+      <view wx:if="{{!loading && !filteredDishes.length}}" class="empty-state">
+        <view class="empty-icon">🍽️</view>
+        <view class="empty-text">该分类暂无菜品</view>
+        <view class="empty-sub">换个分类看看吧</view>
+      </view>
+
+      <view wx:if="{{loading}}" class="loading-state">
+        <t-loading theme="circular" text="加载中..." />
+      </view>
+
+      <view wx:for="{{filteredDishes}}" wx:key="_id" class="card-wrapper">
+        <view class="dish-card">
+          <view class="dish-card-body">
+            <image
+              wx:if="{{item.image}}"
+              class="dish-card-image"
+              src="{{item.image}}"
+              mode="aspectFill"
+            />
+            <view wx:else class="dish-card-placeholder">
+              <t-icon name="image" size="64rpx" color="#d4c5b2" />
+            </view>
+            <view class="dish-card-content">
+              <view class="dish-card-title">{{item.name}}</view>
+              <view class="dish-card-desc">{{item.description}}</view>
+            </view>
+          </view>
+          <view class="dish-card-footer">
+            <t-stepper
+              value="{{cart[item._id].num || 0}}"
+              min="{{0}}"
+              max="{{99}}"
+              step="{{1}}"
+              theme="filled"
+              data-dish-id="{{item._id}}"
+              bind:change="onStepperChange"
+            />
+          </view>
+        </view>
+      </view>
+
+      <view style="height: 140rpx;"></view>
+
+    </scroll-view>
+
+  </view>
+
+  <view class="cart-bar" wx:if="{{cartTotalCount > 0}}">
+    <view class="cart-bar-left">
+      <t-icon name="cart" size="48rpx" color="#e47435" />
+      <view class="cart-count-badge">{{cartTotalCount}}</view>
+    </view>
+    <view class="cart-bar-info">
+      <text class="cart-bar-hint">已选菜品</text>
+    </view>
+    <view class="cart-bar-right">
+      <t-button
+        theme="primary"
+        size="large"
+        loading="{{submitting}}"
+        bind:tap="submitOrder"
+        custom-style="background: #e47435; border-radius: 999rpx;"
+      >
+        提交订单
+      </t-button>
+    </view>
+  </view>
+
+</view>

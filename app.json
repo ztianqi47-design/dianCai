@@ -1,0 +1,48 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/order/order",
+    "pages/wishes/wishes",
+    "pages/chef/chef",
+    "pages/dishes/dishes",
+    "pages/profile/profile"
+  ],
+  "window": {
+    "backgroundTextStyle": "light",
+    "navigationBarBackgroundColor": "#fff2df",
+    "navigationBarTitleText": "家庭小食堂",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#fffaf3"
+  },
+  "tabBar": {
+    "color": "#8c6a4d",
+    "selectedColor": "#e47435",
+    "backgroundColor": "#fffaf3",
+    "borderStyle": "white",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "菜单"
+      },
+      {
+        "pagePath": "pages/order/order",
+        "text": "订单"
+      },
+      {
+        "pagePath": "pages/wishes/wishes",
+        "text": "许愿"
+      },
+      {
+        "pagePath": "pages/chef/chef",
+        "text": "大厨"
+      },
+      {
+        "pagePath": "pages/profile/profile",
+        "text": "我的"
+      }
+    ]
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

@@ -1,0 +1,59 @@
+{
+  "collections": [
+    {
+      "name": "users",
+      "description": "Family members and chef profile records",
+      "fields": {
+        "_openid": "String",
+        "nickname": "String",
+        "role": "String: chef | member",
+        "rewardCodeUrl": "String",
+        "createTime": "Date",
+        "updateTime": "Date"
+      }
+    },
+    {
+      "name": "dishes",
+      "description": "Chef private dish library",
+      "fields": {
+        "name": "String",
+        "image": "String",
+        "isActive": "Boolean",
+        "createTime": "Date",
+        "updateTime": "Date"
+      }
+    },
+    {
+      "name": "orders",
+      "description": "Family dish orders and cooking status",
+      "fields": {
+        "_openid": "String",
+        "dishList": "Array",
+        "status": "Number: 0 ordered, 1 cooking, 2 finished",
+        "createTime": "Date",
+        "updateTime": "Date"
+      }
+    },
+    {
+      "name": "wishes",
+      "description": "Requested dishes from family members",
+      "fields": {
+        "_openid": "String",
+        "content": "String",
+        "isFulfilled": "Boolean",
+        "createTime": "Date",
+        "updateTime": "Date"
+      }
+    },
+    {
+      "name": "reward_messages",
+      "description": "Reward notes submitted after offline WeChat transfer",
+      "fields": {
+        "_openid": "String",
+        "order_id": "String",
+        "message": "String",
+        "createTime": "Date"
+      }
+    }
+  ]
+}

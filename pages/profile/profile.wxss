@@ -1,0 +1,8 @@
+.reward-code {
+  display: block;
+  width: 320rpx;
+  height: 320rpx;
+  margin: 24rpx auto 0;
+  border-radius: 24rpx;
+  background: #f8efe5;
+}

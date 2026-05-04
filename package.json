@@ -1,0 +1,9 @@
+{
+  "name": "dianCai",
+  "version": "1.0.0",
+  "description": "家庭小食堂微信小程序",
+  "main": "app.js",
+  "dependencies": {
+    "tdesign-miniprogram": "^1.9.0"
+  }
+}

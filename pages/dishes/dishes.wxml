@@ -1,0 +1,48 @@
+<view class="page">
+  <view class="hero">
+    <view class="title">私房菜库</view>
+    <view class="subtitle">维护大厨拿手菜，并决定今天哪些菜可以点。</view>
+  </view>
+
+  <view wx:if="{{user && user.role !== 'chef'}}" class="empty section">
+    当前账号无菜库管理权限。
+  </view>
+
+  <block wx:if="{{!user || user.role === 'chef'}}">
+    <view class="card section">
+      <view class="section-title">新增菜品</view>
+      <input class="input" placeholder="菜名" value="{{name}}" bindinput="onNameInput" />
+      <view class="row section">
+        <image class="dish-image" src="{{image}}" mode="aspectFill" wx:if="{{image}}"></image>
+        <view class="dish-image" wx:else></view>
+        <button class="button secondary" bindtap="chooseImage">上传图片</button>
+      </view>
+      <button class="button" style="width: 100%; margin-top: 20rpx;" bindtap="createDish">加入菜库</button>
+    </view>
+
+    <view class="section">
+      <view class="section-title">菜品列表</view>
+      <view wx:if="{{!dishes.length}}" class="empty">菜库还是空的</view>
+      <view wx:for="{{dishes}}" wx:key="_id" class="card row">
+        <image class="dish-image" src="{{item.image}}" mode="aspectFill" wx:if="{{item.image}}"></image>
+        <view class="dish-image" wx:else></view>
+        <view style="flex: 1;">
+          <view>{{item.name}}</view>
+          <view class="muted">{{item.isActive ? "今日已上架" : "今日未上架"}}</view>
+        </view>
+        <button class="button {{item.isActive ? 'ghost' : ''}}" bindtap="toggleActive" data-dish="{{item}}">
+          {{item.isActive ? "下架" : "上架"}}
+        </button>
+      </view>
+    </view>
+
+    <view class="section">
+      <view class="section-title">待安排许愿</view>
+      <view wx:if="{{!wishes.length}}" class="empty">没有待安排愿望</view>
+      <view wx:for="{{wishes}}" wx:key="_id" class="card row">
+        <view>{{item.content}}</view>
+        <button class="button secondary" bindtap="convertWish" data-wish="{{item}}">转入菜库</button>
+      </view>
+    </view>
+  </block>
+</view>
