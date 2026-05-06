@@ -13,6 +13,8 @@ Page({
     orders: [],
     summary: [],
     rewardMessages: [],
+    viewingDishName: "",
+    viewingDishMethod: "",
     loading: false
   },
 
@@ -75,6 +77,23 @@ Page({
       url: "/pages/dishes/dishes"
     });
   },
+
+  openMethod(event) {
+    const item = event.currentTarget.dataset.item;
+    this.setData({
+      viewingDishName: item.name || "",
+      viewingDishMethod: item.method || "这道菜还没有保存制作方式。"
+    });
+  },
+
+  closeMethod() {
+    this.setData({
+      viewingDishName: "",
+      viewingDishMethod: ""
+    });
+  },
+
+  noop() {},
 
   async updateStatus(event) {
     const { id, status } = event.currentTarget.dataset;

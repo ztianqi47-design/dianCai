@@ -13,6 +13,7 @@ function normalizeDish(dish) {
     ...dish,
     category: dish.category || "素菜",
     description: dish.description || "",
+    method: dish.method || "",
     createTimeText: formatDate(dish.createTime),
     updateTimeText: formatDate(dish.updateTime)
   };
@@ -49,6 +50,7 @@ exports.main = async (event) => {
     const name = sanitizeText(event.name, 40);
     const category = sanitizeText(event.category, 20) || "素菜";
     const description = sanitizeText(event.description, 120);
+    const method = sanitizeText(event.method, 2000);
     if (!name) {
       throw new Error("Dish name is required");
     }
@@ -60,6 +62,7 @@ exports.main = async (event) => {
         name,
         category,
         description,
+        method,
         image: sanitizeText(event.image, 300),
         isActive: false,
         createTime: now(),
@@ -85,6 +88,25 @@ exports.main = async (event) => {
         updateTime: now()
       }
     });
+    return {
+      ok: true
+    };
+  }
+
+  if (action === "updateMethod") {
+    await requireChef(OPENID);
+    const dishRes = await dishes.doc(event.dishId).get();
+    if (!dishRes.data || dishRes.data.familyId !== user.familyId) {
+      throw new Error("Dish not found");
+    }
+
+    await dishes.doc(event.dishId).update({
+      data: {
+        method: sanitizeText(event.method, 2000),
+        updateTime: now()
+      }
+    });
+
     return {
       ok: true
     };

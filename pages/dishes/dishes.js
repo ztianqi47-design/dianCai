@@ -11,7 +11,10 @@ Page({
     categoryIndex: 0,
     category: "素菜",
     description: "",
+    method: "",
     image: "",
+    editingDishId: "",
+    editingMethod: "",
     loading: false
   },
 
@@ -44,6 +47,33 @@ Page({
   onDescriptionInput(event) {
     this.setData({
       description: event.detail.value
+    });
+  },
+
+  onMethodInput(event) {
+    this.setData({
+      method: event.detail.value
+    });
+  },
+
+  openMethodEditor(event) {
+    const dish = event.currentTarget.dataset.dish;
+    this.setData({
+      editingDishId: dish._id,
+      editingMethod: dish.method || ""
+    });
+  },
+
+  closeMethodEditor() {
+    this.setData({
+      editingDishId: "",
+      editingMethod: ""
+    });
+  },
+
+  onEditingMethodInput(event) {
+    this.setData({
+      editingMethod: event.detail.value
     });
   },
 
@@ -106,6 +136,7 @@ Page({
         name,
         category: this.data.category,
         description: this.data.description.trim(),
+        method: this.data.method.trim(),
         image: this.data.image
       });
       this.setData({
@@ -113,6 +144,7 @@ Page({
         categoryIndex: 0,
         category: "素菜",
         description: "",
+        method: "",
         image: ""
       });
       wx.showToast({
@@ -147,6 +179,7 @@ Page({
         name: wish.content,
         category: "素菜",
         description: "",
+        method: "",
         image: ""
       });
       await callCloud("wish", {
@@ -160,6 +193,28 @@ Page({
       this.loadData();
     } catch (err) {
       showError(err, "转入菜库失败");
+    }
+  },
+
+  async saveMethod() {
+    if (!this.data.editingDishId) {
+      return;
+    }
+
+    try {
+      await callCloud("dish", {
+        action: "updateMethod",
+        dishId: this.data.editingDishId,
+        method: this.data.editingMethod.trim()
+      });
+      wx.showToast({
+        title: "做法已保存",
+        icon: "success"
+      });
+      this.closeMethodEditor();
+      this.loadData();
+    } catch (err) {
+      showError(err, "保存做法失败");
     }
   }
 });

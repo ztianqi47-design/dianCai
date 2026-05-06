@@ -23,10 +23,14 @@ function summarizeOrders(orders) {
       if (!map[dish.name]) {
         map[dish.name] = {
           name: dish.name,
-          num: 0
+          num: 0,
+          method: dish.method || ""
         };
       }
       map[dish.name].num += Number(dish.num || 0);
+      if (!map[dish.name].method && dish.method) {
+        map[dish.name].method = dish.method;
+      }
     });
   });
   return Object.values(map);
@@ -41,6 +45,7 @@ function normalizeDishList(dishList) {
     dishId: sanitizeText(dish.dishId, 80),
     name: sanitizeText(dish.name, 40),
     image: sanitizeText(dish.image, 300),
+    method: sanitizeText(dish.method, 2000),
     num: Math.max(1, Number(dish.num || 1))
   }));
 }

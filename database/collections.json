@@ -35,6 +35,7 @@
         "name": "String",
         "category": "String",
         "description": "String",
+        "method": "String",
         "image": "String",
         "isActive": "Boolean",
         "createTime": "Date",

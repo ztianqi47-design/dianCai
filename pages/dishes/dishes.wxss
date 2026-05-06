@@ -7,3 +7,16 @@
   align-items: center;
   margin-top: 20rpx;
 }
+
+.dish-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.small-button {
+  min-width: 148rpx;
+  min-height: 68rpx;
+  padding: 0 24rpx;
+  font-size: 24rpx;
+}

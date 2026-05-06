@@ -16,8 +16,11 @@
     <view class="section">
       <view class="section-title">今日备餐汇总</view>
       <view wx:if="{{!summary.length}}" class="empty">今天还没有人点餐</view>
-      <view wx:for="{{summary}}" wx:key="name" class="card row">
-        <view>{{item.name}}</view>
+      <view wx:for="{{summary}}" wx:key="name" class="card row summary-card" bindtap="openMethod" data-item="{{item}}">
+        <view>
+          <view>{{item.name}}</view>
+          <view class="muted">点击查看制作方式</view>
+        </view>
         <view class="section-title">x {{item.num}}</view>
       </view>
     </view>
@@ -53,4 +56,16 @@
       </view>
     </view>
   </block>
+
+  <view wx:if="{{viewingDishName}}" class="method-modal-mask" bindtap="closeMethod">
+    <view class="method-modal" catchtap="noop">
+      <view class="method-modal-header">
+        <view class="section-title" style="margin-bottom: 0;">{{viewingDishName}}的制作方式</view>
+        <view class="method-modal-close" bindtap="closeMethod">关闭</view>
+      </view>
+      <scroll-view scroll-y class="method-modal-body">
+        <view class="method-text">{{viewingDishMethod}}</view>
+      </scroll-view>
+    </view>
+  </view>
 </view>

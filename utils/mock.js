@@ -29,6 +29,7 @@ const state = {
       isActive: true,
       category: "素菜",
       description: "新鲜番茄与土鸡蛋的经典搭配",
+      method: "1. 番茄切块，鸡蛋打散。 2. 先炒鸡蛋盛出。 3. 番茄炒软后回锅鸡蛋，加盐翻匀。",
       createTimeText: "今天 09:00"
     },
     {
@@ -39,6 +40,7 @@ const state = {
       isActive: true,
       category: "荤菜",
       description: "肥而不腻，入口即化",
+      method: "1. 五花肉焯水切块。 2. 小火煸出油脂。 3. 加冰糖、生抽、老抽和热水慢炖。",
       createTimeText: "今天 09:10"
     },
     {
@@ -312,7 +314,8 @@ function handleDish(data) {
         .map((dish) => ({
           ...dish,
           category: dish.category || "素菜",
-          description: dish.description || ""
+          description: dish.description || "",
+          method: dish.method || ""
         }))
     };
   }
@@ -322,7 +325,8 @@ function handleDish(data) {
       dishes: state.dishes.filter((dish) => dish.familyId === state.user.familyId).map((dish) => ({
         ...dish,
         category: dish.category || "素菜",
-        description: dish.description || ""
+        description: dish.description || "",
+        method: dish.method || ""
       }))
     };
   }
@@ -335,6 +339,7 @@ function handleDish(data) {
       image: data.image || "",
       category: String(data.category || "").trim() || "素菜",
       description: String(data.description || "").trim(),
+      method: String(data.method || "").trim(),
       isActive: false,
       createTimeText: getNowText()
     };
@@ -348,6 +353,17 @@ function handleDish(data) {
     const dish = state.dishes.find((item) => item._id === data.dishId && item.familyId === state.user.familyId);
     if (dish) {
       dish.isActive = Boolean(data.isActive);
+    }
+    return {
+      ok: true
+    };
+  }
+
+  if (data.action === "updateMethod") {
+    const dish = state.dishes.find((item) => item._id === data.dishId && item.familyId === state.user.familyId);
+    if (dish) {
+      dish.method = String(data.method || "").trim();
+      dish.updateTimeText = getNowText();
     }
     return {
       ok: true

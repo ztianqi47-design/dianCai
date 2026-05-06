@@ -80,6 +80,7 @@ Page({
           image: dish.image || "",
           category: dish.category || "",
           description: dish.description || "",
+          method: dish.method || "",
           num: value
         };
       }

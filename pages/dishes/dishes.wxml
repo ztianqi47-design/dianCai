@@ -22,6 +22,13 @@
         maxlength="120"
         bindinput="onDescriptionInput"
       />
+      <textarea
+        class="textarea section"
+        placeholder="记录这道菜的制作步骤，方便备餐时查看"
+        value="{{method}}"
+        maxlength="2000"
+        bindinput="onMethodInput"
+      />
       <view class="row section">
         <image class="dish-image" src="{{image}}" mode="aspectFill" wx:if="{{image}}"></image>
         <view class="dish-image" wx:else></view>
@@ -40,11 +47,17 @@
           <view>{{item.name}}</view>
           <view class="muted">{{item.category || "素菜"}}</view>
           <view class="muted" wx:if="{{item.description}}">{{item.description}}</view>
+          <view class="muted" wx:if="{{item.method}}">已保存做法</view>
           <view class="muted">{{item.isActive ? "今日已上架" : "今日未上架"}}</view>
         </view>
-        <button class="button {{item.isActive ? 'ghost' : ''}}" bindtap="toggleActive" data-dish="{{item}}">
-          {{item.isActive ? "下架" : "上架"}}
-        </button>
+        <view class="dish-actions">
+          <button class="button secondary small-button" bindtap="openMethodEditor" data-dish="{{item}}">
+            编辑做法
+          </button>
+          <button class="button {{item.isActive ? 'ghost' : ''}} small-button" bindtap="toggleActive" data-dish="{{item}}">
+            {{item.isActive ? "下架" : "上架"}}
+          </button>
+        </view>
       </view>
     </view>
 
@@ -54,6 +67,21 @@
       <view wx:for="{{wishes}}" wx:key="_id" class="card row">
         <view>{{item.content}}</view>
         <button class="button secondary" bindtap="convertWish" data-wish="{{item}}">转入菜库</button>
+      </view>
+    </view>
+
+    <view wx:if="{{editingDishId}}" class="card section">
+      <view class="section-title">编辑制作方式</view>
+      <textarea
+        class="textarea"
+        placeholder="例如：1. 处理食材 2. 热锅炒制 3. 调味收汁"
+        value="{{editingMethod}}"
+        maxlength="2000"
+        bindinput="onEditingMethodInput"
+      />
+      <view class="row section">
+        <button class="button ghost" bindtap="closeMethodEditor">取消</button>
+        <button class="button" bindtap="saveMethod">保存做法</button>
       </view>
     </view>
   </block>
