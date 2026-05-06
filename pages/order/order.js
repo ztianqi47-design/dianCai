@@ -1,4 +1,5 @@
 const { callCloud, showError } = require("../../utils/cloud");
+const { ensureAuthenticated, updateCustomTabBar } = require("../../utils/auth");
 
 const STATUS_TEXT = {
   0: "已点单",
@@ -16,11 +17,14 @@ Page({
   },
 
   onLoad() {
-    this.loadData();
+    this.initPage();
   },
 
   onShow() {
-    this.loadData();
+    updateCustomTabBar(this);
+    if (this.data.orders.length || this.data.loading) {
+      this.loadData();
+    }
   },
 
   onPullDownRefresh() {
@@ -28,6 +32,11 @@ Page({
   },
 
   async loadData() {
+    const session = await ensureAuthenticated({ role: "member" });
+    if (!session.ok) {
+      return;
+    }
+
     this.setData({ loading: true });
     try {
       const [orderRes, rewardRes] = await Promise.all([
@@ -47,6 +56,16 @@ Page({
     } finally {
       this.setData({ loading: false });
     }
+  },
+
+  async initPage() {
+    const session = await ensureAuthenticated({ role: "member" });
+    if (!session.ok) {
+      return;
+    }
+
+    updateCustomTabBar(this);
+    this.loadData();
   },
 
   openReward(event) {

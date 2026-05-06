@@ -1,4 +1,5 @@
 const { callCloud, showError } = require("../../utils/cloud");
+const { ensureAuthenticated, updateCustomTabBar } = require("../../utils/auth");
 
 Page({
   data: {
@@ -13,6 +14,20 @@ Page({
   },
 
   onLoad() {
+    this.initPage();
+  },
+
+  onShow() {
+    updateCustomTabBar(this);
+  },
+
+  async initPage() {
+    const session = await ensureAuthenticated({ role: "member" });
+    if (!session.ok) {
+      return;
+    }
+
+    updateCustomTabBar(this);
     this.loadDishes();
   },
 

@@ -1,6 +1,7 @@
 const {
   cloud,
   db,
+  getCurrentUser,
   requireChef
 } = require("./common");
 
@@ -12,20 +13,20 @@ exports.main = async (event) => {
     throw new Error(`Unknown notify action: ${action}`);
   }
 
-  await requireChef(OPENID);
+  const chef = await requireChef(OPENID);
 
   const orderRes = await db.collection("orders").doc(event.orderId).get();
   const order = orderRes.data;
-  if (!order) {
+  if (!order || order.familyId !== chef.familyId) {
     throw new Error("Order not found");
   }
 
-  // Replace templateId after enabling subscription messages in WeChat MP console.
-  const templateId = "";
+  const fullChef = await getCurrentUser(OPENID);
+  const templateId = (fullChef && fullChef.mealReadyTemplateId) || "";
   if (!templateId) {
     return {
       skipped: true,
-      reason: "Subscription message templateId is not configured"
+      reason: "请先在我的页面配置通知模板 ID"
     };
   }
 

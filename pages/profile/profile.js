@@ -1,25 +1,38 @@
 const { callCloud, chooseAndUploadImage, showError } = require("../../utils/cloud");
+const { ensureAuthenticated, updateCustomTabBar } = require("../../utils/auth");
 
 Page({
   data: {
     user: null,
-    nickname: ""
+    family: null,
+    nickname: "",
+    mealReadyTemplateId: ""
   },
 
   onLoad() {
-    this.loadProfile();
+    this.initPage();
   },
 
   onShow() {
+    updateCustomTabBar(this);
     this.loadProfile();
   },
 
   async loadProfile() {
     try {
-      const res = await callCloud("login");
+      const session = await ensureAuthenticated();
+      if (!session.ok) {
+        return;
+      }
+
+      const res = await callCloud("login", {
+        action: "bootstrap"
+      });
       this.setData({
         user: res.user,
-        nickname: res.user.nickname || ""
+        family: res.family || null,
+        nickname: res.user.nickname || "",
+        mealReadyTemplateId: res.user.mealReadyTemplateId || ""
       });
     } catch (err) {
       showError(err, "资料加载失败");
@@ -29,6 +42,12 @@ Page({
   onNicknameInput(event) {
     this.setData({
       nickname: event.detail.value
+    });
+  },
+
+  onMealReadyTemplateInput(event) {
+    this.setData({
+      mealReadyTemplateId: event.detail.value
     });
   },
 
@@ -71,6 +90,40 @@ Page({
     } catch (err) {
       showError(err, "上传失败");
     }
+  },
+
+  async saveMealReadyTemplateId() {
+    if (!this.data.user || this.data.user.role !== "chef") {
+      wx.showToast({
+        title: "只有大厨可以配置",
+        icon: "none"
+      });
+      return;
+    }
+
+    try {
+      await callCloud("login", {
+        action: "updateMealReadyTemplateId",
+        mealReadyTemplateId: this.data.mealReadyTemplateId.trim()
+      });
+      wx.showToast({
+        title: "模板 ID 已保存",
+        icon: "success"
+      });
+      this.loadProfile();
+    } catch (err) {
+      showError(err, "保存失败");
+    }
+  },
+
+  async initPage() {
+    const session = await ensureAuthenticated();
+    if (!session.ok) {
+      return;
+    }
+
+    updateCustomTabBar(this);
+    this.loadProfile();
   },
 
   previewRewardCode() {

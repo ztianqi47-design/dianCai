@@ -1,5 +1,6 @@
 {
   "pages": [
+    "pages/auth/auth",
     "pages/index/index",
     "pages/order/order",
     "pages/wishes/wishes",
@@ -15,6 +16,7 @@
     "backgroundColor": "#fffaf3"
   },
   "tabBar": {
+    "custom": true,
     "color": "#8c6a4d",
     "selectedColor": "#e47435",
     "backgroundColor": "#fffaf3",
@@ -34,7 +36,7 @@
       },
       {
         "pagePath": "pages/chef/chef",
-        "text": "大厨"
+        "text": "工作台"
       },
       {
         "pagePath": "pages/profile/profile",

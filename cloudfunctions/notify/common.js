@@ -22,5 +22,6 @@ async function requireChef(openid) {
 module.exports = {
   cloud,
   db,
+  getCurrentUser,
   requireChef
 };

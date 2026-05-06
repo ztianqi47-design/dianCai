@@ -1,22 +1,26 @@
 {
+  "families": {
+    "read": "get('database.users').where({ _openid: auth.openid, familyId: doc._id, registered: true }).count() > 0",
+    "write": "get('database.users').where({ _openid: auth.openid, familyId: doc._id, role: 'chef', registered: true }).count() > 0"
+  },
   "users": {
-    "read": "auth.openid == doc._openid || doc.role == 'chef'",
+    "read": "auth.openid == doc._openid || (doc.role == 'chef' && get('database.users').where({ _openid: auth.openid, familyId: doc.familyId, registered: true }).count() > 0)",
     "write": "auth.openid == doc._openid"
   },
   "dishes": {
-    "read": true,
-    "write": "doc._openid == auth.openid"
+    "read": "get('database.users').where({ _openid: auth.openid, familyId: doc.familyId, registered: true }).count() > 0",
+    "write": "get('database.users').where({ _openid: auth.openid, familyId: doc.familyId, role: 'chef', registered: true }).count() > 0"
   },
   "orders": {
-    "read": "auth.openid == doc._openid || get('database.users').where({ _openid: auth.openid, role: 'chef' }).count() > 0",
+    "read": "auth.openid == doc._openid || get('database.users').where({ _openid: auth.openid, familyId: doc.familyId, role: 'chef', registered: true }).count() > 0",
     "write": "auth.openid == doc._openid"
   },
   "wishes": {
-    "read": true,
-    "write": "auth.openid == doc._openid"
+    "read": "get('database.users').where({ _openid: auth.openid, familyId: doc.familyId, registered: true }).count() > 0",
+    "write": "auth.openid == doc._openid || get('database.users').where({ _openid: auth.openid, familyId: doc.familyId, role: 'chef', registered: true }).count() > 0"
   },
   "reward_messages": {
-    "read": "auth.openid == doc._openid || get('database.users').where({ _openid: auth.openid, role: 'chef' }).count() > 0",
+    "read": "auth.openid == doc._openid || get('database.users').where({ _openid: auth.openid, familyId: doc.familyId, role: 'chef', registered: true }).count() > 0",
     "write": "auth.openid == doc._openid"
   }
 }

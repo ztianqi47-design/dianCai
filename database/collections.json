@@ -1,13 +1,28 @@
 {
   "collections": [
     {
+      "name": "families",
+      "description": "Family groups and invite code mapping",
+      "fields": {
+        "name": "String",
+        "inviteCode": "String",
+        "chefOpenid": "String",
+        "createTime": "Date",
+        "updateTime": "Date"
+      }
+    },
+    {
       "name": "users",
       "description": "Family members and chef profile records",
       "fields": {
         "_openid": "String",
         "nickname": "String",
         "role": "String: chef | member",
+        "familyId": "String",
+        "familyName": "String",
+        "registered": "Boolean",
         "rewardCodeUrl": "String",
+        "mealReadyTemplateId": "String",
         "createTime": "Date",
         "updateTime": "Date"
       }
@@ -16,7 +31,10 @@
       "name": "dishes",
       "description": "Chef private dish library",
       "fields": {
+        "familyId": "String",
         "name": "String",
+        "category": "String",
+        "description": "String",
         "image": "String",
         "isActive": "Boolean",
         "createTime": "Date",
@@ -28,6 +46,7 @@
       "description": "Family dish orders and cooking status",
       "fields": {
         "_openid": "String",
+        "familyId": "String",
         "dishList": "Array",
         "status": "Number: 0 ordered, 1 cooking, 2 finished",
         "createTime": "Date",
@@ -39,6 +58,7 @@
       "description": "Requested dishes from family members",
       "fields": {
         "_openid": "String",
+        "familyId": "String",
         "content": "String",
         "isFulfilled": "Boolean",
         "createTime": "Date",
@@ -50,6 +70,7 @@
       "description": "Reward notes submitted after offline WeChat transfer",
       "fields": {
         "_openid": "String",
+        "familyId": "String",
         "order_id": "String",
         "message": "String",
         "createTime": "Date"

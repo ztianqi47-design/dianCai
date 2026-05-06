@@ -1,4 +1,5 @@
 const { callCloud, showError } = require("../../utils/cloud");
+const { ensureAuthenticated, updateCustomTabBar } = require("../../utils/auth");
 
 Page({
   data: {
@@ -8,11 +9,15 @@ Page({
   },
 
   onLoad() {
-    this.loadWishes();
+    this.initPage();
   },
 
   onPullDownRefresh() {
     this.loadWishes().finally(() => wx.stopPullDownRefresh());
+  },
+
+  onShow() {
+    updateCustomTabBar(this);
   },
 
   onInput(event) {
@@ -22,6 +27,11 @@ Page({
   },
 
   async loadWishes() {
+    const session = await ensureAuthenticated();
+    if (!session.ok) {
+      return;
+    }
+
     this.setData({ loading: true });
     try {
       const res = await callCloud("wish", {
@@ -35,6 +45,16 @@ Page({
     } finally {
       this.setData({ loading: false });
     }
+  },
+
+  async initPage() {
+    const session = await ensureAuthenticated();
+    if (!session.ok) {
+      return;
+    }
+
+    updateCustomTabBar(this);
+    this.loadWishes();
   },
 
   async submitWish() {

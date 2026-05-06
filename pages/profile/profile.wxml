@@ -7,6 +7,8 @@
   <view class="card section" wx:if="{{user}}">
     <view class="section-title">{{user.role === 'chef' ? '大厨' : '家人'}}</view>
     <view class="muted">OpenID：{{user._openid}}</view>
+    <view class="muted" wx:if="{{family}}">家庭：{{family.name}}</view>
+    <view class="muted" wx:if="{{user.role === 'chef' && family}}">邀请码：{{family.inviteCode}}</view>
   </view>
 
   <view class="card section">
@@ -20,5 +22,19 @@
     <view class="muted">家人点击“加个鸡腿”时，会看到这里上传的微信赞赏码或收款码。</view>
     <image class="reward-code" src="{{user.rewardCodeUrl}}" mode="aspectFill" wx:if="{{user.rewardCodeUrl}}" bindtap="previewRewardCode"></image>
     <button class="button secondary" style="width: 100%; margin-top: 20rpx;" bindtap="uploadRewardCode">上传赞赏码</button>
+  </view>
+
+  <view class="card section" wx:if="{{user && user.role === 'chef'}}">
+    <view class="section-title">开饭通知模板 ID</view>
+    <view class="muted">在微信公众平台配置订阅消息模板后，把模板 ID 填到这里。</view>
+    <input
+      class="input"
+      placeholder="请输入订阅消息模板 ID"
+      value="{{mealReadyTemplateId}}"
+      bindinput="onMealReadyTemplateInput"
+    />
+    <button class="button secondary" style="width: 100%; margin-top: 20rpx;" bindtap="saveMealReadyTemplateId">
+      保存模板 ID
+    </button>
   </view>
 </view>

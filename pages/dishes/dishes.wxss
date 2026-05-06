@@ -1,3 +1,9 @@
 .card .input {
   margin-top: 10rpx;
 }
+
+.picker-input {
+  display: flex;
+  align-items: center;
+  margin-top: 20rpx;
+}

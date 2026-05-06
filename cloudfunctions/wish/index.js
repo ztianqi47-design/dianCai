@@ -2,6 +2,7 @@ const {
   cloud,
   db,
   formatDate,
+  requireRegisteredUser,
   now,
   requireChef,
   sanitizeText
@@ -19,9 +20,12 @@ exports.main = async (event) => {
   const { OPENID } = cloud.getWXContext();
   const action = event.action || "list";
   const wishes = db.collection("wishes");
+  const user = await requireRegisteredUser(OPENID);
 
   if (action === "list") {
-    const res = await wishes.orderBy("createTime", "desc").get();
+    const res = await wishes.where({
+      familyId: user.familyId
+    }).orderBy("createTime", "desc").get();
     return {
       wishes: res.data.map(normalizeWish)
     };
@@ -36,6 +40,7 @@ exports.main = async (event) => {
     const addRes = await wishes.add({
       data: {
         _openid: OPENID,
+        familyId: user.familyId,
         content,
         isFulfilled: false,
         createTime: now(),
@@ -50,6 +55,11 @@ exports.main = async (event) => {
 
   if (action === "fulfill") {
     await requireChef(OPENID);
+    const wishRes = await wishes.doc(event.wishId).get();
+    if (!wishRes.data || wishRes.data.familyId !== user.familyId) {
+      throw new Error("Wish not found");
+    }
+
     await wishes.doc(event.wishId).update({
       data: {
         isFulfilled: true,

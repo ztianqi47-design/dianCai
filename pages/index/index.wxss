@@ -8,6 +8,8 @@ page {
   flex-direction: column;
   height: 100vh;
   background: #fffaf3;
+  padding-bottom: calc(120rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
 }
 
 .main-content {

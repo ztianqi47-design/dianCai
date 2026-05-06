@@ -28,9 +28,17 @@ async function getCurrentUser(openid) {
   return res.data[0] || null;
 }
 
-async function requireChef(openid) {
+async function requireRegisteredUser(openid) {
   const user = await getCurrentUser(openid);
-  if (!user || user.role !== "chef") {
+  if (!user || !user.registered || !user.familyId) {
+    throw new Error("User is not registered");
+  }
+  return user;
+}
+
+async function requireChef(openid) {
+  const user = await requireRegisteredUser(openid);
+  if (user.role !== "chef") {
     throw new Error("Only chef can perform this action");
   }
   return user;
@@ -44,7 +52,9 @@ module.exports = {
   cloud,
   db,
   formatDate,
+  getCurrentUser,
   now,
+  requireRegisteredUser,
   requireChef,
   sanitizeText
 };

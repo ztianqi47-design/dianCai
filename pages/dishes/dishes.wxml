@@ -12,6 +12,16 @@
     <view class="card section">
       <view class="section-title">新增菜品</view>
       <input class="input" placeholder="菜名" value="{{name}}" bindinput="onNameInput" />
+      <picker mode="selector" range="{{categories}}" value="{{categoryIndex}}" bindchange="onCategoryChange">
+        <view class="input picker-input">{{category}}</view>
+      </picker>
+      <textarea
+        class="textarea section"
+        placeholder="简单介绍一下这道菜"
+        value="{{description}}"
+        maxlength="120"
+        bindinput="onDescriptionInput"
+      />
       <view class="row section">
         <image class="dish-image" src="{{image}}" mode="aspectFill" wx:if="{{image}}"></image>
         <view class="dish-image" wx:else></view>
@@ -28,6 +38,8 @@
         <view class="dish-image" wx:else></view>
         <view style="flex: 1;">
           <view>{{item.name}}</view>
+          <view class="muted">{{item.category || "素菜"}}</view>
+          <view class="muted" wx:if="{{item.description}}">{{item.description}}</view>
           <view class="muted">{{item.isActive ? "今日已上架" : "今日未上架"}}</view>
         </view>
         <button class="button {{item.isActive ? 'ghost' : ''}}" bindtap="toggleActive" data-dish="{{item}}">

@@ -3,6 +3,9 @@ const { callCloud } = require("./utils/cloud");
 App({
   globalData: {
     user: null,
+    family: null,
+    registered: false,
+    sessionPromise: null,
     demoMode: true,
     cloudEnv: "replace-with-your-cloud-env-id"
   },
@@ -32,10 +35,19 @@ App({
 
   async bootstrapUser() {
     try {
-      const res = await callCloud("login");
-      this.globalData.user = res.user;
+      const res = await callCloud("login", {
+        action: "bootstrap"
+      });
+      this.globalData.user = res.user || null;
+      this.globalData.family = res.family || null;
+      this.globalData.registered = Boolean(res.registered && res.user);
+      return res;
     } catch (err) {
       console.error("Failed to bootstrap user", err);
+      this.globalData.user = null;
+      this.globalData.family = null;
+      this.globalData.registered = false;
+      throw err;
     }
   }
 });

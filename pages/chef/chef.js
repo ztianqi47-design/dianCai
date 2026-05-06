@@ -1,4 +1,5 @@
 const { callCloud, showError } = require("../../utils/cloud");
+const { ensureAuthenticated, updateCustomTabBar } = require("../../utils/auth");
 
 const STATUS_TEXT = {
   0: "已点单",
@@ -16,10 +17,11 @@ Page({
   },
 
   onLoad() {
-    this.loadDashboard();
+    this.initPage();
   },
 
   onShow() {
+    updateCustomTabBar(this);
     this.loadDashboard();
   },
 
@@ -28,20 +30,13 @@ Page({
   },
 
   async loadDashboard() {
+    const session = await ensureAuthenticated({ role: "chef" });
+    if (!session.ok) {
+      return;
+    }
+
     this.setData({ loading: true });
     try {
-      const loginRes = await callCloud("login");
-
-      if (!loginRes.user || loginRes.user.role !== "chef") {
-        this.setData({
-          user: loginRes.user,
-          orders: [],
-          summary: [],
-          rewardMessages: []
-        });
-        return;
-      }
-
       const [orderRes, rewardRes] = await Promise.all([
         callCloud("order", { action: "listToday" }),
         callCloud("reward", { action: "listAll" })
@@ -53,7 +48,7 @@ Page({
       }));
 
       this.setData({
-        user: loginRes.user,
+        user: session.user,
         orders,
         summary: orderRes.summary || [],
         rewardMessages: rewardRes.messages || []
@@ -63,6 +58,16 @@ Page({
     } finally {
       this.setData({ loading: false });
     }
+  },
+
+  async initPage() {
+    const session = await ensureAuthenticated({ role: "chef" });
+    if (!session.ok) {
+      return;
+    }
+
+    updateCustomTabBar(this);
+    this.loadDashboard();
   },
 
   goDishes() {
@@ -80,16 +85,30 @@ Page({
         status: Number(status)
       });
 
+      let toastTitle = "状态已更新";
+      let toastIcon = "success";
+
       if (Number(status) === 2) {
-        await callCloud("notify", {
-          action: "mealReady",
-          orderId: id
-        });
+        try {
+          const notifyRes = await callCloud("notify", {
+            action: "mealReady",
+            orderId: id
+          });
+
+          if (notifyRes && notifyRes.skipped) {
+            toastTitle = notifyRes.reason || "通知未发送";
+            toastIcon = "none";
+          }
+        } catch (notifyErr) {
+          console.error("Failed to send meal-ready notification", notifyErr);
+          toastTitle = "状态已更新，通知失败";
+          toastIcon = "none";
+        }
       }
 
       wx.showToast({
-        title: "状态已更新",
-        icon: "success"
+        title: toastTitle,
+        icon: toastIcon
       });
       this.loadDashboard();
     } catch (err) {

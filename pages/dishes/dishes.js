@@ -1,26 +1,49 @@
 const { callCloud, chooseAndUploadImage, showError } = require("../../utils/cloud");
+const { ensureAuthenticated, updateCustomTabBar } = require("../../utils/auth");
 
 Page({
   data: {
+    categories: ["素菜", "荤菜", "健身餐", "汤"],
     user: null,
     dishes: [],
     wishes: [],
     name: "",
+    categoryIndex: 0,
+    category: "素菜",
+    description: "",
     image: "",
     loading: false
   },
 
   onLoad() {
-    this.loadData();
+    this.initPage();
   },
 
   onPullDownRefresh() {
     this.loadData().finally(() => wx.stopPullDownRefresh());
   },
 
+  onShow() {
+    updateCustomTabBar(this);
+  },
+
   onNameInput(event) {
     this.setData({
       name: event.detail.value
+    });
+  },
+
+  onCategoryChange(event) {
+    const categoryIndex = Number(event.detail.value || 0);
+    this.setData({
+      categoryIndex,
+      category: this.data.categories[categoryIndex] || this.data.categories[0]
+    });
+  },
+
+  onDescriptionInput(event) {
+    this.setData({
+      description: event.detail.value
     });
   },
 
@@ -34,25 +57,19 @@ Page({
   },
 
   async loadData() {
+    const session = await ensureAuthenticated({ role: "chef" });
+    if (!session.ok) {
+      return;
+    }
+
     this.setData({ loading: true });
     try {
-      const loginRes = await callCloud("login");
-
-      if (!loginRes.user || loginRes.user.role !== "chef") {
-        this.setData({
-          user: loginRes.user,
-          dishes: [],
-          wishes: []
-        });
-        return;
-      }
-
       const [dishRes, wishRes] = await Promise.all([
         callCloud("dish", { action: "listAll" }),
         callCloud("wish", { action: "list" })
       ]);
       this.setData({
-        user: loginRes.user,
+        user: session.user,
         dishes: dishRes.dishes || [],
         wishes: (wishRes.wishes || []).filter((wish) => !wish.isFulfilled)
       });
@@ -61,6 +78,16 @@ Page({
     } finally {
       this.setData({ loading: false });
     }
+  },
+
+  async initPage() {
+    const session = await ensureAuthenticated({ role: "chef" });
+    if (!session.ok) {
+      return;
+    }
+
+    updateCustomTabBar(this);
+    this.loadData();
   },
 
   async createDish() {
@@ -77,10 +104,15 @@ Page({
       await callCloud("dish", {
         action: "create",
         name,
+        category: this.data.category,
+        description: this.data.description.trim(),
         image: this.data.image
       });
       this.setData({
         name: "",
+        categoryIndex: 0,
+        category: "素菜",
+        description: "",
         image: ""
       });
       wx.showToast({
@@ -113,6 +145,8 @@ Page({
       await callCloud("dish", {
         action: "create",
         name: wish.content,
+        category: "素菜",
+        description: "",
         image: ""
       });
       await callCloud("wish", {
